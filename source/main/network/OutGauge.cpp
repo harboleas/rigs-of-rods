@@ -44,83 +44,48 @@ void OutGauge::Close(void)
 {
     if (sockfd != 0)
     {
-#ifdef USE_SOCKETW
-#   if _WIN32
+    #ifdef _WIN32
         closesocket(sockfd);
-#   else
-        close( sockfd );
-#   endif
-#endif // USE_SOCKETW
+    #else
+        close(sockfd);
+    #endif
         sockfd = 0;
+        working = false;
     }
 }
 
 void OutGauge::Connect()
 {
-#if defined(_WIN32) && defined(USE_SOCKETW)
-    SWBaseSocket::SWBaseError error;
-
-    // startup winsock
-    WSADATA wsd;
-    if (WSAStartup(MAKEWORD(2, 2), &wsd) != 0)
-    {
-        LOG("[RoR|OutGauge] Error starting up winsock. OutGauge disabled.");
-        return;
-    }
-
-    // open a new socket
+    // Abro el socket UDP para enviar los datos de telemetria
     if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
     {
         LOG(String("[RoR|OutGauge] Error creating socket for OutGauge: ").append(strerror(errno)));
         return;
     }
 
-    // get the IP of the remote side, this function is compatible with windows 2000
-    hostent* remoteHost = gethostbyname(App::io_outgauge_ip->getStr().c_str());
-    char* ip = inet_ntoa(*(struct in_addr *)*remoteHost->h_addr_list);
-
-    // init socket data
-    struct sockaddr_in sendaddr;
-    memset(&sendaddr, 0, sizeof(sendaddr));
-    sendaddr.sin_family = AF_INET;
-    sendaddr.sin_addr.s_addr = inet_addr(ip);
-    sendaddr.sin_port = htons(App::io_outgauge_port->getInt());
-
-    // connect
-    if (connect(sockfd, (struct sockaddr *) &sendaddr, sizeof(sendaddr)) == SOCKET_ERROR)
-    {
-        LOG(String("[RoR|OutGauge] Error connecting socket for OutGauge: ").append(strerror(errno)));
-        return;
-    }
-
-    LOG("[RoR|OutGauge] Connected successfully");
+    LOG("[RoR|OutGauge] Socket created successfully");
     working = true;
-#else
-    // TODO: fix linux
-#endif // _WIN32
 }
 
 bool OutGauge::Update(float dt, ActorPtr truck)
 {
-#if defined(_WIN32) && defined(USE_SOCKETW)
     if (!working)
     {
         return false;
     }
 
-    // below the set delay?
+    // Solo actualiza los datos dsp del intervalo configurado en ms
     timer += dt;
-    if (timer < (0.1f * App::io_outgauge_delay->getFloat()))
+    if (timer < (0.001f * App::io_outgauge_delay->getFloat()))
     {
         return true;
     }
     timer = 0;
 
-    // send a package
+    // Armado del paquete a enviar
     OutGaugePack gd;
     memset(&gd, 0, sizeof(gd));
 
-    // set some common things
     gd.Time = Root::getSingleton().getTimer()->getMilliseconds();
     gd.ID = App::io_outgauge_id->getInt();
     gd.Flags = 0 | OG_KM;
@@ -143,9 +108,9 @@ bool OutGauge::Update(float dt, ActorPtr truck)
         {
             gd.Flags |= OG_TURBO;
         }
-        gd.Gear = std::max(0, truck->ar_engine->GetGear() + 1); // we only support one reverse gear
+        gd.Gear = truck->ar_engine->GetGear(); 
         gd.PLID = 0;
-        gd.Speed = fabs(truck->ar_wheel_speed);
+        gd.Speed = truck->getSpeed();
         gd.RPM = truck->ar_engine->GetEngineRpm();
         gd.Turbo = truck->ar_engine->GetTurboPsi() * 0.0689475729f;
         gd.EngTemp = 0; // TODO
@@ -192,12 +157,16 @@ bool OutGauge::Update(float dt, ActorPtr truck)
             strncpy(gd.Display2, truck->ar_design_name.c_str() + 15, 15);
         }
     }
-    // send the package
-    send(sockfd, (const char*)&gd, sizeof(gd), NULL);
+
+    // Configura la direccion para enviar 
+    struct sockaddr_in sendaddr;
+    memset(&sendaddr, 0, sizeof(sendaddr));
+    sendaddr.sin_family = AF_INET;
+    sendaddr.sin_addr.s_addr = inet_addr(App::io_outgauge_ip->getStr().c_str());
+    sendaddr.sin_port = htons(App::io_outgauge_port->getInt());
+
+    sendto(sockfd, (const char*)&gd, sizeof(gd), 0, (const sockaddr *) &sendaddr, sizeof(sendaddr));
 
     return true;
-#else
-    // TODO: fix linux
-	return false;
-#endif // _WIN32
+
 }

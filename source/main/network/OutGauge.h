@@ -26,16 +26,18 @@
 
 #include "Application.h"
 
-#ifdef USE_SOCKETW
-#include "SocketW.h"
-#endif //USE_SOCKETW
-
 #ifdef _WIN32
-#include <Ws2tcpip.h>
-#define PACK( __Declaration__ ) __pragma( pack(push, 1) ) __Declaration__ __pragma( pack(pop) )
+    #include <Winsock2.h>
+    #define PACK( __Declaration__ ) __pragma( pack(push, 1) ) __Declaration__ __pragma( pack(pop) )
 #else
-#define PACK( __Declaration__ ) __Declaration__ __attribute__((__packed__))
-#endif // _WIN32
+    // Para usar sockets en linux
+    #include <arpa/inet.h> // htons, inet_addr
+    #include <netinet/in.h> // sockaddr_in
+    #include <sys/types.h> // uint16_t
+    #include <sys/socket.h> // socket, sendto
+    #include <unistd.h> // close
+    #define PACK( __Declaration__ ) __Declaration__ __attribute__((__packed__))
+#endif 
 
 namespace RoR {
 
