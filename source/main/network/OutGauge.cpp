@@ -87,44 +87,58 @@ bool OutGauge::Update(float dt, ActorPtr truck)
     memset(&gd, 0, sizeof(gd));
 
     gd.Time = Root::getSingleton().getTimer()->getMilliseconds();
-    strncpy(gd.Car, "None", 31);
-
-    if (truck && truck->ar_engine)
+    if (!truck)
     {
-        // Vehiculo con motor 
-
+        // Sin Vehiculo
+        strncpy(gd.Car, "Ninguno", 31);
+    }
+    else
+    {
+        // Dentro del Vehiculo 
+        
         strncpy(gd.Car, truck->getTruckName().c_str(), 31);
-
-        gd.Gear = truck->ar_engine->GetGear(); 
         gd.Speed = truck->getSpeed();
-        gd.RPM = truck->ar_engine->GetEngineRpm();
-
-        gd.ShowLights = 0;
-        if (truck->ar_parking_brake)
-            gd.ShowLights |= DL_HANDBRAKE;
-        if (truck->getHeadlightsVisible())
-            gd.ShowLights |= DL_FULLBEAM;
-        if (truck->ar_engine->hasContact() && !truck->ar_engine->isRunning())
-            gd.ShowLights |= DL_BATTERY;
-        if (truck->ar_dashboard->_getBool(DD_SIGNAL_TURNLEFT))
-            gd.ShowLights |= DL_SIGNAL_L;
-        if (truck->ar_dashboard->_getBool(DD_SIGNAL_TURNRIGHT))
-            gd.ShowLights |= DL_SIGNAL_R;
-        if (truck->ar_dashboard->_getBool(DD_SIGNAL_WARNING))
-            gd.ShowLights |= DL_SIGNAL_ANY;
-        if (truck->tc_mode)
-            gd.ShowLights |= DL_TC;
-        if (truck->alb_mode)
-            gd.ShowLights |= DL_ABS;
-
-        gd.Throttle = truck->ar_engine->GetAcceleration();
-        gd.Brake = truck->ar_brake;
-        gd.SteeringAngle = truck->getSteeringAngle();
+        
+        Ogre::Vector3 vel = truck->getVelocity();
+        gd.Velocity_X = vel.x;
+        gd.Velocity_Y = vel.y;
+        gd.Velocity_Z = vel.z;
 
         Ogre::Vector3 GForces = truck->getGForces();
         gd.GForces_Vertical = GForces.x;
         gd.GForces_Sagital = GForces.y;
         gd.GForces_Lateral = GForces.z;
+    
+        if (truck->ar_engine)
+        {
+            // Vehiculo con motor 
+            gd.RPM = truck->ar_engine->GetEngineRpm();
+            gd.Gear = truck->ar_engine->GetGear(); 
+            
+            gd.Throttle = truck->ar_engine->GetAcceleration();
+            gd.Brake = truck->ar_brake;
+            gd.SteeringAngle = truck->getSteeringAngle();
+
+
+            gd.ShowLights = 0;
+            if (truck->ar_parking_brake)
+                gd.ShowLights |= DL_HANDBRAKE;
+            if (truck->getHeadlightsVisible())
+                gd.ShowLights |= DL_FULLBEAM;
+            if (truck->ar_engine->hasContact() && !truck->ar_engine->isRunning())
+                gd.ShowLights |= DL_BATTERY;
+            if (truck->ar_dashboard->_getBool(DD_SIGNAL_TURNLEFT))
+                gd.ShowLights |= DL_SIGNAL_L;
+            if (truck->ar_dashboard->_getBool(DD_SIGNAL_TURNRIGHT))
+                gd.ShowLights |= DL_SIGNAL_R;
+            if (truck->ar_dashboard->_getBool(DD_SIGNAL_WARNING))
+                gd.ShowLights |= DL_SIGNAL_ANY;
+            if (truck->tc_mode)
+                gd.ShowLights |= DL_TC;
+            if (truck->alb_mode)
+                gd.ShowLights |= DL_ABS;
+        }
+
     }
 
     // Configura la direccion para enviar 

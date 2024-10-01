@@ -93,16 +93,23 @@ private:
     {
         unsigned int   Time;            // time in milliseconds (to check order)
         char           Car[32];         // Car name
-        int            Gear;            // Reverse:-1, Neutral:0, First:1...
+        
         float          Speed;           // M/S
-        float          RPM;             // RPM
-        unsigned int   ShowLights;      // Dash lights currently switched on
-        float          Throttle;        // 0 to 1
-        float          Brake;           // 0 to 1
-        float          SteeringAngle;   
+        float          Velocity_X;
+        float          Velocity_Y;
+        float          Velocity_Z;
+        
         float          GForces_Vertical;
         float          GForces_Sagital;
         float          GForces_Lateral;
+        
+        float          RPM;             // RPM
+        int            Gear;            // Reverse:-1, Neutral:0, First:1...
+        float          Throttle;        // 0 to 1
+        float          Brake;           // 0 to 1
+        float          SteeringAngle;   
+        
+        unsigned int   ShowLights;      // Dash lights currently switched on
     });
 };
 
