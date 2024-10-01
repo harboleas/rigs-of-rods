@@ -87,47 +87,17 @@ bool OutGauge::Update(float dt, ActorPtr truck)
     memset(&gd, 0, sizeof(gd));
 
     gd.Time = Root::getSingleton().getTimer()->getMilliseconds();
-    gd.ID = App::io_outgauge_id->getInt();
-    gd.Flags = 0 | OG_KM;
-    sprintf(gd.Car, "RoR");
+    strncpy(gd.Car, "None", 31);
 
-    if (!truck)
+    if (truck && truck->ar_engine)
     {
-        // not in a truck?
-        sprintf(gd.Display2, "not in vehicle");
-    }
-    else if (truck && !truck->ar_engine)
-    {
-        // no engine?
-        sprintf(gd.Display2, "no engine");
-    }
-    else if (truck && truck->ar_engine)
-    {
-        // truck and engine valid
-        if (truck->ar_engine->HasTurbo())
-        {
-            gd.Flags |= OG_TURBO;
-        }
+        // Vehiculo con motor 
+
+        strncpy(gd.Car, truck->getTruckName().c_str(), 31);
+
         gd.Gear = truck->ar_engine->GetGear(); 
-        gd.PLID = 0;
         gd.Speed = truck->getSpeed();
         gd.RPM = truck->ar_engine->GetEngineRpm();
-        gd.Turbo = truck->ar_engine->GetTurboPsi() * 0.0689475729f;
-        gd.EngTemp = 0; // TODO
-        gd.Fuel = 0; // TODO
-        gd.OilPressure = 0; // TODO
-        gd.OilTemp = 0; // TODO
-
-        gd.DashLights = 0;
-        gd.DashLights |= DL_HANDBRAKE;
-        gd.DashLights |= DL_BATTERY;
-        gd.DashLights |= DL_SIGNAL_L;
-        gd.DashLights |= DL_SIGNAL_R;
-        gd.DashLights |= DL_SIGNAL_ANY;
-        if (!truck->tc_nodash)
-            gd.DashLights |= DL_TC;
-        if (!truck->alb_nodash)
-            gd.DashLights |= DL_ABS;
 
         gd.ShowLights = 0;
         if (truck->ar_parking_brake)
@@ -149,13 +119,12 @@ bool OutGauge::Update(float dt, ActorPtr truck)
 
         gd.Throttle = truck->ar_engine->GetAcceleration();
         gd.Brake = truck->ar_brake;
-        gd.Clutch = 1 - truck->ar_engine->GetClutch(); // 0-1
+        gd.SteeringAngle = truck->getSteeringAngle();
 
-        strncpy(gd.Display1, truck->ar_design_name.c_str(), 15);
-        if (truck->ar_design_name.length() > 15)
-        {
-            strncpy(gd.Display2, truck->ar_design_name.c_str() + 15, 15);
-        }
+        Ogre::Vector3 GForces = truck->getGForces();
+        gd.GForces_Vertical = GForces.x;
+        gd.GForces_Sagital = GForces.y;
+        gd.GForces_Lateral = GForces.z;
     }
 
     // Configura la direccion para enviar 

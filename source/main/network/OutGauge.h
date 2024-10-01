@@ -91,26 +91,18 @@ private:
 
     PACK (struct OutGaugePack
     {
-        unsigned int   Time;         // time in milliseconds (to check order)
-        char           Car[4];       // Car name
-        unsigned short Flags;        // Info (see OG_x below)
-        unsigned char  Gear;         // Reverse:0, Neutral:1, First:2...
-        unsigned char  PLID;         // Unique ID of viewed player (0 = none)
-        float          Speed;        // M/S
-        float          RPM;          // RPM
-        float          Turbo;        // BAR
-        float          EngTemp;      // C
-        float          Fuel;         // 0 to 1
-        float          OilPressure;  // BAR
-        float          OilTemp;      // C
-        unsigned int   DashLights;   // Dash lights available (see DL_x below)
-        unsigned int   ShowLights;   // Dash lights currently switched on
-        float          Throttle;     // 0 to 1
-        float          Brake;        // 0 to 1
-        float          Clutch;       // 0 to 1
-        char           Display1[16]; // Usually Fuel
-        char           Display2[16]; // Usually Settings
-        int            ID;           // optional - only if OutGauge ID is specified
+        unsigned int   Time;            // time in milliseconds (to check order)
+        char           Car[32];         // Car name
+        int            Gear;            // Reverse:-1, Neutral:0, First:1...
+        float          Speed;           // M/S
+        float          RPM;             // RPM
+        unsigned int   ShowLights;      // Dash lights currently switched on
+        float          Throttle;        // 0 to 1
+        float          Brake;           // 0 to 1
+        float          SteeringAngle;   
+        float          GForces_Vertical;
+        float          GForces_Sagital;
+        float          GForces_Lateral;
     });
 };
 
