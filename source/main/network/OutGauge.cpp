@@ -120,6 +120,8 @@ bool OutGauge::Update(float dt, ActorPtr truck)
             gd.Clutch = truck->ar_engine->GetClutch();
             gd.SteeringAngle = truck->getSteeringAngle();
 
+            gd.Odometer = truck->m_odometer_total;
+
             gd.ShowLights = 0;
             if (truck->ar_parking_brake)
                 gd.ShowLights |= DL_HANDBRAKE;

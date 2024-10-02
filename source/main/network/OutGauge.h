@@ -109,6 +109,8 @@ private:
         float          Brake;           // 0 to 1
         float          Clutch;   
         float          SteeringAngle;   
+
+        float          Odometer;   
         
         unsigned int   ShowLights;      // Dash lights currently switched on
     });
