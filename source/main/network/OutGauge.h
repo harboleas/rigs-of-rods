@@ -107,6 +107,7 @@ private:
         int            Gear;            // Reverse:-1, Neutral:0, First:1...
         float          Throttle;        // 0 to 1
         float          Brake;           // 0 to 1
+        float          Clutch;   
         float          SteeringAngle;   
         
         unsigned int   ShowLights;      // Dash lights currently switched on

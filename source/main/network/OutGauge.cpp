@@ -117,8 +117,8 @@ bool OutGauge::Update(float dt, ActorPtr truck)
             
             gd.Throttle = truck->ar_engine->GetAcceleration();
             gd.Brake = truck->ar_brake;
+            gd.Clutch = truck->ar_engine->GetClutch();
             gd.SteeringAngle = truck->getSteeringAngle();
-
 
             gd.ShowLights = 0;
             if (truck->ar_parking_brake)
