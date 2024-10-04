@@ -91,11 +91,11 @@ private:
 
     PACK (struct OutGaugePack
     {
-        unsigned int   Time;            // time in milliseconds (to check order)
-        char           Car[32];         // Car name
+        unsigned int   Time;            // time en milisegundos (para chequear el orden de los paquetes)
+        char           Car_Name[32];    // Car's name
         
-        float          Speed;           // M/S
-        float          Velocity_X;
+        float          Speed;           // m/s basado en el movimiento de las ruedas
+        float          Velocity_X;      // Vector velocidad del auto
         float          Velocity_Y;
         float          Velocity_Z;
         
@@ -112,7 +112,10 @@ private:
 
         float          Odometer;   
         
-        unsigned int   ShowLights;      // Dash lights currently switched on
+        unsigned int   ShowLights;      // Luces
+        
+        float          RPM_Max;         // Para seleccionar instrumento
+        float          Speed_Max;       // Para seleccionar instrumento
     });
 };
 

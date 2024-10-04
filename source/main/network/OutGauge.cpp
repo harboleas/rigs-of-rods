@@ -90,14 +90,14 @@ bool OutGauge::Update(float dt, ActorPtr truck)
     if (!truck)
     {
         // Sin Vehiculo
-        strncpy(gd.Car, "Ninguno", 31);
+        strncpy(gd.Car_Name, "Ninguno", 31);
     }
     else
     {
         // Dentro del Vehiculo 
         
-        strncpy(gd.Car, truck->getTruckName().c_str(), 31);
-        gd.Speed = truck->getSpeed();
+        strncpy(gd.Car_Name, truck->getTruckName().c_str(), 31);
+        gd.Speed = truck->getWheelSpeed();
         
         Ogre::Vector3 vel = truck->getVelocity();
         gd.Velocity_X = vel.x;
@@ -139,6 +139,9 @@ bool OutGauge::Update(float dt, ActorPtr truck)
                 gd.ShowLights |= DL_TC;
             if (truck->alb_mode)
                 gd.ShowLights |= DL_ABS;
+
+            gd.RPM_Max = truck->ar_engine->getMaxRPM();
+            gd.Speed_Max = truck->ar_guisettings_speedo_max_kph;
         }
 
     }
