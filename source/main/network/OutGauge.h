@@ -93,7 +93,8 @@ private:
     {
         unsigned int   Time;            // time en milisegundos (para chequear el orden de los paquetes)
         char           Car_Name[32];    // Car's name
-        
+        int            Type;            // Tipo de vehiculo 
+
         float          Speed;           // m/s basado en el movimiento de las ruedas
         float          Velocity_X;      // Vector velocidad del auto
         float          Velocity_Y;

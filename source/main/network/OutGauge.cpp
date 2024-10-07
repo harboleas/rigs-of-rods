@@ -97,6 +97,7 @@ bool OutGauge::Update(float dt, ActorPtr truck)
         // Dentro del Vehiculo 
         
         strncpy(gd.Car_Name, truck->getTruckName().c_str(), 31);
+        gd.Type = truck->getTruckType();   // Tipo de vehiculo
         gd.Speed = truck->getWheelSpeed();
         
         Ogre::Vector3 vel = truck->getVelocity();
