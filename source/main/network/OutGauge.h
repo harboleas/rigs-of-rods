@@ -110,7 +110,9 @@ private:
         float          Brake;           // 0 to 1
         float          Clutch;   
         float          SteeringAngle;   
+        float          Rudder;   
 
+        float          Height;
         float          Odometer;   
         
         unsigned int   ShowLights;      // Luces

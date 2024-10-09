@@ -21,6 +21,8 @@
 
 #include "OutGauge.h"
 
+#include "ScrewProp.h"
+
 #include "Application.h"
 #include "Actor.h"
 #include "ActorManager.h"
@@ -98,7 +100,8 @@ bool OutGauge::Update(float dt, ActorPtr truck)
         
         strncpy(gd.Car_Name, truck->getTruckName().c_str(), 31);
         gd.Type = truck->getTruckType();   // Tipo de vehiculo
-        gd.Speed = truck->getWheelSpeed();
+        float speed = truck->getWheelSpeed();
+        gd.Speed = speed >= 0 ? speed : -speed;
         
         Ogre::Vector3 vel = truck->getVelocity();
         gd.Velocity_X = vel.x;
@@ -109,7 +112,8 @@ bool OutGauge::Update(float dt, ActorPtr truck)
         gd.GForces_Vertical = GForces.x;
         gd.GForces_Sagital = GForces.y;
         gd.GForces_Lateral = GForces.z;
-    
+        gd.Height = truck->getHeightAboveGround();
+
         if (truck->ar_engine)
         {
             // Vehiculo con motor 
@@ -143,6 +147,11 @@ bool OutGauge::Update(float dt, ActorPtr truck)
 
             gd.RPM_Max = truck->ar_engine->getMaxRPM();
             gd.Speed_Max = truck->ar_guisettings_speedo_max_kph;
+        }
+        else if (truck->ar_screwprops[0])
+        {
+            gd.Rudder = truck->ar_screwprops[0]->getRudder();
+            gd.Throttle = truck->ar_screwprops[0]->getThrottle();
         }
 
     }
