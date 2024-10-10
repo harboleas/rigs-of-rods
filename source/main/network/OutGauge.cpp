@@ -112,11 +112,12 @@ bool OutGauge::Update(float dt, ActorPtr truck)
         gd.GForces_Vertical = GForces.x;
         gd.GForces_Sagital = GForces.y;
         gd.GForces_Lateral = GForces.z;
-        gd.Height = truck->getHeightAboveGround();
 
-        if (truck->ar_engine)
+        gd.Height = truck->getHeightAboveGround();  // Altura o profundidad
+
+        if (truck->ar_engine) 
         {
-            // Vehiculo con motor 
+            // Vehiculo terrestre con motor 
             gd.RPM = truck->ar_engine->GetEngineRpm();
             gd.Gear = truck->ar_engine->GetGear(); 
             
@@ -150,8 +151,12 @@ bool OutGauge::Update(float dt, ActorPtr truck)
         }
         else if (truck->ar_screwprops[0])
         {
-            gd.Rudder = truck->ar_screwprops[0]->getRudder();
+            // Vehiculo maritimo con al menos 1 motor 
             gd.Throttle = truck->ar_screwprops[0]->getThrottle();
+            gd.SteeringAngle = truck->ar_screwprops[0]->getRudder();
+            // water speed
+            Vector3 hdir = truck->GetCameraDir();
+            gd.Speed = hdir.dotProduct(truck->ar_nodes[truck->ar_main_camera_node_pos].Velocity) * 1.9438f; // 1.943 = m/s in knots/s
         }
 
     }
